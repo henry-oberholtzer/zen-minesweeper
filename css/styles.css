@@ -1,0 +1,40 @@
+:root {
+	--tile-underlay-color: lightgrey;
+	--tile-border-shadow: darkgrey;
+	--tile-border-light: white;
+}
+
+html * {
+	box-sizing: border-box;
+}
+
+body {
+	width: 100%;
+	height: 100%;
+	padding: 0;
+	margin: 0;
+}
+
+.tile {
+	width: 32px;
+	height: 32px;
+	background-color: var(--tile-underlay-color);
+}
+
+.tile.blank:hover {
+	cursor: pointer;
+}
+
+.blank {
+	border: 3px solid var(--tile-border-shadow);
+	border-left: 3px solid var(--tile-border-light);
+	border-top: 3px solid var(--tile-border-light);
+}
+
+.flag {
+	background-color: red;
+}
+
+.revealed {
+	border: 1px solid var(--tile-border-shadow);
+}
