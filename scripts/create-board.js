@@ -1,3 +1,5 @@
+import { getNeighboringTilesLocations } from './logic.js';
+
 // Creates empty array
 const emptyTwoDimensionArray = (xDimension, yDimension) => {
 	const verticalArray = new Array(yDimension).fill(0);
@@ -23,24 +25,6 @@ const placeMines = (twoDimensionArray, mines) => {
 		}
 	}
 	return arrayWithMines;
-};
-
-const getNeighboringTilesLocations = (x, y, xLimit, yLimit) => {
-	const neighbors = [];
-	for (let i = -1; i < 2; i++) {
-		const newX = x + i;
-		if (newX < 0 || newX > xLimit) {
-		} else {
-			for (let j = -1; j < 2; j++) {
-				const newY = y + j;
-				if (newY < 0 || newY > yLimit) {
-				} else {
-					neighbors.push([newX, newY]);
-				}
-			}
-		}
-	}
-	return neighbors;
 };
 
 // Maps proximity to the array
@@ -77,6 +61,12 @@ const generateProximity = (twoDimensionArray) => {
 export const openNewField = (newGame) => {
 	const { xDimension, yDimension, xOpen, yOpen, mines } = newGame;
 	let emptyBoard = emptyTwoDimensionArray(xDimension, yDimension);
-	emptyBoard[yOpen][xOpen] = 'blank';
-	console.log(generateProximity(placeMines(emptyBoard, mines)));
+	getNeighboringTilesLocations(xOpen, yOpen, xDimension, yDimension).forEach(
+		(location) => {
+			const [x, y] = location;
+			emptyBoard[y][x] = 'blank';
+			console.log(location);
+		}
+	);
+	return generateProximity(placeMines(emptyBoard, mines));
 };

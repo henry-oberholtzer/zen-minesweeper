@@ -26,6 +26,7 @@ body {
 	height: 32px;
 	background-position: center;
 	background-color: var(--tile-color);
+	border: 1px solid var(--tile-border-shadow);
 	cursor: default;
 }
 
@@ -39,11 +40,39 @@ body {
 }
 
 .flag {
-	background-image: url('./../assets/svgs/mine.svg');
+	background-image: url('./../assets/svgs/flag.svg');
 }
 
 .one {
 	background-image: url('./../assets/svgs/one.svg');
+}
+
+.two {
+	background-image: url('./../assets/svgs/two.svg');
+}
+
+.three {
+	background-image: url('./../assets/svgs/three.svg');
+}
+
+.four {
+	background-color: url('./../assets/svgs/four.svg');
+}
+
+.five {
+	background-color: green;
+}
+
+.six {
+	background-color: rgb(25, 22, 165);
+}
+
+.seven {
+	background-color: rgb(62, 165, 22);
+}
+
+.eight {
+	background-color: rgb(177, 3, 154);
 }
 
 .hidden {
@@ -51,7 +80,4 @@ body {
 	border-left: 3px solid var(--tile-border-light);
 	border-top: 3px solid var(--tile-border-light);
 	cursor: pointer;
-}
-.revealed {
-	border: 1px solid var(--tile-border-shadow);
 }

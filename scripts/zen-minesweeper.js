@@ -1,24 +1,26 @@
 import { openNewField } from './create-board.js';
+import { floodFill } from './logic.js';
 
-// Set game board to size of user's screen
-const screenHeight = screen.availHeight;
-const screenWidth = screen.availWidth;
-console.log(screenHeight, screenWidth);
-const xDimension = Math.round(screenWidth / 32);
-const yDimension = Math.round(screenHeight / 32);
+const xDimension = 50;
+const yDimension = 20;
+let currentGame = [];
 
 // Handle first click
 const handleFirstClick = (e) => {
 	const openingMove = e.target.id.split('.');
+	const x = parseInt(openingMove[0]);
+	const y = parseInt(openingMove[1]);
 	const newGame = {
-		mines: 80,
+		mines: 200,
 		xDimension: xDimension,
 		yDimension: yDimension,
-		xOpen: parseInt(openingMove[0]) - 1,
-		yOpen: parseInt(openingMove[1]) - 1,
+		xOpen: x,
+		yOpen: y,
 	};
-	console.log(newGame);
-	openNewField(newGame);
+	currentGame = openNewField(newGame);
+	floodFill(x, y, currentGame).forEach((tileID) => revealTile(tileID));
+	game.removeEventListener('click', handleFirstClick);
+	game.addEventListener('click', (e) => handleClick(e));
 };
 
 // Handles clicks to set flags
@@ -29,39 +31,78 @@ const handleContextMenu = (e) => {
 	}
 };
 
+// Checks input and updates board;
+const revealTile = (tileID) => {
+	const classes = document.getElementById(tileID).classList;
+	if (classes.contains('hidden')) {
+		const move = tileID.split('.');
+		const x = parseInt(move[0]);
+		const y = parseInt(move[1]);
+		const tileType = currentGame[y][x];
+		classes.remove('hidden');
+		switch (tileType) {
+			case 1:
+				classes.add('one');
+				break;
+			case 2:
+				classes.add('two');
+				break;
+			case 3:
+				classes.add('three');
+				break;
+			case 4:
+				classes.add('four');
+				break;
+			case 5:
+				classes.add('five');
+				break;
+			case 6:
+				classes.add('six');
+				break;
+			case 7:
+				classes.add('seven');
+				break;
+			case 8:
+				classes.add('eight');
+				break;
+			case 'mine':
+				classes.add('mine-detonated');
+				console.log('trigger mine reveal, trigger game over');
+				break;
+			case 'blank':
+				floodFill(x, y, currentGame).forEach((tileID) => revealTile(tileID));
+				break;
+		}
+	}
+};
+
 // Handles clicks to set flags and reveal squares
 const handleClick = (e) => {
 	const classes = document.getElementById(e.target.id).classList;
-	if (classes.contains('hidden'))
-		if (classes.contains('tile') && !classes.contains('flag')) {
-			console.log(
-				'checks the type with the game data, updates game data and adds the appropriate revealed!'
-			);
-			classes.remove('hidden');
-			classes.add('revealed', 'one'); // to be dynamic with the type of tile
-		}
+	if (classes.contains('tile') && !classes.contains('flag')) {
+		revealTile(e.target.id);
+		// to be dynamic with the type of tile
+	}
 };
 
 // Generates tiles on the screen
 const game = document.getElementById('game');
 const appendTiles = (xDimension, yDimension) => {
-	for (let x = 1; x <= xDimension; x++) {
-		for (let y = 1; y <= yDimension; y++) {
+	for (let x = 0; x < xDimension; x++) {
+		for (let y = 0; y < yDimension; y++) {
 			let tile = document.createElement('div');
 			tile.classList.add('tile', 'hidden');
-			tile.style.gridColumn = x;
-			tile.style.gridRow = y;
+			tile.style.gridColumn = x + 1;
+			tile.style.gridRow = y + 1;
 			tile.id = `${x}.${y}`;
 			game.append(tile);
 		}
 	}
 };
-
 appendTiles(xDimension, yDimension);
 
 // Enables user input
-game.addEventListener('click', (e) => handleFirstClick(e));
-// game.addEventListener('click', (e) => handleClick(e));
+game.addEventListener('click', handleFirstClick);
 game.addEventListener('contextmenu', (e) => {
 	e.preventDefault();
 	handleContextMenu(e);
