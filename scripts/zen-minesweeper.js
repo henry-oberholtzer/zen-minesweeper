@@ -1,9 +1,21 @@
 import { openNewField } from './create-board.js';
 import { floodFill, getAllType } from './logic.js';
 
+const gameState = {
+	xDimension: 50,
+	yDimension: 20,
+	gameActive: false,
+	currentGame,
+};
+
+const setLocalStorage = (objectName) => {
+	return (object) => localStorage.setItem(object);
+};
+const getLocalStorage = (objectName) => localStorage.getItem(objectName);
+
 const xDimension = 50;
 const yDimension = 20;
-let gameOver = false;
+let gameOver = true;
 let currentGame = [];
 const revealedTiles = [];
 
@@ -104,6 +116,7 @@ const appendTiles = (xDimension, yDimension) => {
 		}
 	}
 };
+
 appendTiles(xDimension, yDimension);
 
 // Enables user input
@@ -111,4 +124,32 @@ game.addEventListener('click', handleFirstClick);
 game.addEventListener('contextmenu', (e) => {
 	e.preventDefault();
 	handleContextMenu(e);
+});
+
+document.onvisibilitychange = () => {
+	if (document.visibilityState === 'hidden') {
+		console.log('set local storage to the current game data');
+	}
+};
+console.log('visiblity changed, will store in local storage');
+
+document.addEventListener('DOMContentLoaded', () => {
+	console.log('loaded!');
+	console.log('check local storage');
+	/* 
+	check local storage for a 'currentGame' item ->
+	if local storage -> 
+		render html board per previous game -> 
+		render previous game tile settings -> 
+		start game timer again
+	if no local storage -> 
+		render html board per defaults -> 
+		new game start ->
+		add first click event handler ->
+		-> on first click
+		-> generate minefield
+		-> push to local storage
+		-> enable user clicks
+		-> start timer
+	*/
 });

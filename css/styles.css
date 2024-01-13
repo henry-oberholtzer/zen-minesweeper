@@ -66,7 +66,6 @@ header img {
 	background-color: var(--tile-color);
 	border: 1px solid var(--tile-border-shadow);
 	cursor: default;
-	transition: border 100ms ease;
 }
 
 .mine {

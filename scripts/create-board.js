@@ -65,7 +65,6 @@ export const openNewField = (newGame) => {
 		(location) => {
 			const [x, y] = location;
 			emptyBoard[y][x] = 'blank';
-			console.log(location);
 		}
 	);
 	return generateProximity(placeMines(emptyBoard, mines));
