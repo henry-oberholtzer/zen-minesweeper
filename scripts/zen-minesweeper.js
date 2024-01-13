@@ -1,8 +1,9 @@
 import { openNewField } from './create-board.js';
-import { floodFill } from './logic.js';
+import { floodFill, getAllType } from './logic.js';
 
 const xDimension = 50;
 const yDimension = 20;
+let gameOver = false;
 let currentGame = [];
 const revealedTiles = [];
 
@@ -19,6 +20,7 @@ const handleFirstClick = (e) => {
 		yOpen: y,
 	};
 	currentGame = openNewField(newGame);
+	gameOver = false;
 	floodFill(x, y, currentGame).forEach((tileID) => revealTile(tileID));
 	game.removeEventListener('click', handleFirstClick);
 	game.addEventListener('click', (e) => handleClick(e));
@@ -68,8 +70,9 @@ const revealTile = (tileID) => {
 				classes.add('eight');
 				break;
 			case 'mine':
-				classes.add('mine-detonated');
-				console.log('trigger mine reveal, trigger game over');
+				gameOver ? classes.add('mine') : classes.add('mine', 'detonated');
+				gameOver = true;
+				getAllType('mine', currentGame).forEach((tileID) => revealTile(tileID));
 				break;
 			case 'blank':
 				floodFill(x, y, currentGame).forEach((tileID) => revealTile(tileID));

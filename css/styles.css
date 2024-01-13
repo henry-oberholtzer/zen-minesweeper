@@ -75,6 +75,9 @@ header img {
 
 .mine-detonated {
 	background-image: url('./../assets/svgs/mine.svg');
+}
+
+.detonated {
 	background-color: red;
 }
 

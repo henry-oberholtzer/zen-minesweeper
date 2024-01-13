@@ -42,3 +42,15 @@ export const floodFill = (x, y, twoDimensionalArray) => {
 	getFill(x, y, twoDimensionalArray, listToFill);
 	return listToFill;
 };
+
+export const getAllType = (type, twoDimensionalArray) => {
+	const typeIDs = [];
+	twoDimensionalArray.forEach((row, y) => {
+		row.forEach((tile, x) => {
+			if (tile === type) {
+				typeIDs.push(`${x}.${y}`);
+			}
+		});
+	});
+	return typeIDs;
+};
