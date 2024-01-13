@@ -80,8 +80,22 @@ header img {
 	background-color: red;
 }
 
+.hidden {
+	border: 3px solid var(--tile-border-shadow);
+	border-left: 3px solid var(--tile-border-light);
+	border-top: 3px solid var(--tile-border-light);
+	cursor: pointer;
+}
+
 .flag {
 	background-image: url('./../assets/svgs/flag.svg');
+	border: 3px solid var(--tile-border-shadow);
+	border-left: 3px solid var(--tile-border-light);
+	border-top: 3px solid var(--tile-border-light);
+}
+
+.incorrect {
+	background-image: url('./../assets/svgs/flag_incorrect.svg');
 }
 
 .one {
@@ -114,11 +128,4 @@ header img {
 
 .eight {
 	background-image: url('./../assets/svgs/eight.svg');
-}
-
-.hidden {
-	border: 3px solid var(--tile-border-shadow);
-	border-left: 3px solid var(--tile-border-light);
-	border-top: 3px solid var(--tile-border-light);
-	cursor: pointer;
 }

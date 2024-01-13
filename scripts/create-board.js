@@ -58,7 +58,7 @@ const generateProximity = (twoDimensionArray) => {
 };
 
 // Handles the new minefield
-export const openNewField = (newGame) => {
+export const createNewMinefield = (newGame) => {
 	const { xDimension, yDimension, xOpen, yOpen, mines } = newGame;
 	let emptyBoard = emptyTwoDimensionArray(xDimension, yDimension);
 	getNeighboringTilesLocations(xOpen, yOpen, xDimension, yDimension).forEach(
