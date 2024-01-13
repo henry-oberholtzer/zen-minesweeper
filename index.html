@@ -16,7 +16,23 @@
 		<title>Zen Minesweeper</title>
 	</head>
 	<body>
-		<div id="game"></div>
+		<div id="main">
+			<div id="game"></div>
+			<div id="info">
+				<header>
+					<img
+						id="logo"
+						src="./assets/svgs/mine.svg" />
+					<p>
+						zen minesweeper | <span id="mine-count">100</span> remaining mines |
+						<span id="timer-counter">540</span> seconds spent on this field
+					</p>
+				</header>
+				<div id="about">
+					2024 <a href="https://www.henryoberholtzer.com">Henry Oberholtzer</a>
+				</div>
+			</div>
+		</div>
 	</body>
 	<script
 		src="./scripts/zen-minesweeper.js"

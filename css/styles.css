@@ -6,6 +6,42 @@
 
 html * {
 	box-sizing: border-box;
+	font-family: sans-serif;
+}
+
+body {
+	height: 100vh;
+	width: 100vw;
+	max-width: 100%;
+	max-height: 100%;
+	padding: 0;
+	margin: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: var(--tile-color);
+}
+
+#main {
+	width: fit-content;
+	height: fit-content;
+}
+
+header {
+	display: flex;
+	align-items: center;
+}
+
+header img {
+	width: 32px;
+	height: 32px;
+}
+
+#info {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	opacity: 0.5;
 }
 
 #game {
@@ -14,14 +50,13 @@ html * {
 	grid-auto-rows: 32px;
 }
 
-body {
-	width: 100%;
-	height: 100%;
-	padding: 0;
-	margin: 0;
-	display: flex;
-	justify-content: center;
-	background-color: var(--tile-color);
+#logo {
+	margin-left: 5px;
+	margin-right: 10px;
+}
+
+#logo:hover {
+	cursor: pointer;
 }
 
 .tile {
