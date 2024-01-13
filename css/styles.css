@@ -1,11 +1,17 @@
 :root {
-	--tile-underlay-color: lightgrey;
-	--tile-border-shadow: darkgrey;
+	--tile-color: #c0c7c8;
+	--tile-border-shadow: #87999f;
 	--tile-border-light: white;
 }
 
 html * {
 	box-sizing: border-box;
+}
+
+#game {
+	display: grid;
+	grid-auto-columns: 32px;
+	grid-auto-rows: 32px;
 }
 
 body {
@@ -18,23 +24,34 @@ body {
 .tile {
 	width: 32px;
 	height: 32px;
-	background-color: var(--tile-underlay-color);
+	background-position: center;
+	background-color: var(--tile-color);
+	cursor: default;
 }
 
-.tile.blank:hover {
-	cursor: pointer;
+.mine {
+	background-image: url('./../assets/svgs/mine.svg');
 }
 
-.blank {
-	border: 3px solid var(--tile-border-shadow);
-	border-left: 3px solid var(--tile-border-light);
-	border-top: 3px solid var(--tile-border-light);
-}
-
-.flag {
+.mine-detonated {
+	background-image: url('./../assets/svgs/mine.svg');
 	background-color: red;
 }
 
+.flag {
+	background-image: url('./../assets/svgs/mine.svg');
+}
+
+.one {
+	background-image: url('./../assets/svgs/one.svg');
+}
+
+.hidden {
+	border: 3px solid var(--tile-border-shadow);
+	border-left: 3px solid var(--tile-border-light);
+	border-top: 3px solid var(--tile-border-light);
+	cursor: pointer;
+}
 .revealed {
 	border: 1px solid var(--tile-border-shadow);
 }
