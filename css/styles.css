@@ -19,6 +19,9 @@ body {
 	height: 100%;
 	padding: 0;
 	margin: 0;
+	display: flex;
+	justify-content: center;
+	background-color: var(--tile-color);
 }
 
 .tile {
@@ -28,6 +31,7 @@ body {
 	background-color: var(--tile-color);
 	border: 1px solid var(--tile-border-shadow);
 	cursor: default;
+	transition: border 100ms ease;
 }
 
 .mine {
@@ -56,23 +60,23 @@ body {
 }
 
 .four {
-	background-color: url('./../assets/svgs/four.svg');
+	background-image: url('./../assets/svgs/four.svg');
 }
 
 .five {
-	background-color: green;
+	background-image: url('./../assets/svgs/five.svg');
 }
 
 .six {
-	background-color: rgb(25, 22, 165);
+	background-image: url('./../assets/svgs/six.svg');
 }
 
 .seven {
-	background-color: rgb(62, 165, 22);
+	background-image: url('./../assets/svgs/seven.svg');
 }
 
 .eight {
-	background-color: rgb(177, 3, 154);
+	background-image: url('./../assets/svgs/eight.svg');
 }
 
 .hidden {

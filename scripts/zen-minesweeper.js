@@ -4,6 +4,7 @@ import { floodFill } from './logic.js';
 const xDimension = 50;
 const yDimension = 20;
 let currentGame = [];
+const revealedTiles = [];
 
 // Handle first click
 const handleFirstClick = (e) => {
@@ -21,6 +22,7 @@ const handleFirstClick = (e) => {
 	floodFill(x, y, currentGame).forEach((tileID) => revealTile(tileID));
 	game.removeEventListener('click', handleFirstClick);
 	game.addEventListener('click', (e) => handleClick(e));
+	console.log('start timer');
 };
 
 // Handles clicks to set flags
