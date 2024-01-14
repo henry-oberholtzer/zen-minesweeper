@@ -54,3 +54,18 @@ export const getAllType = (type, twoDimensionalArray) => {
 	});
 	return typeIDs;
 };
+
+export const coordsFromID = (tileID) => {
+	const [x, y] = tileID.split('.');
+	return [parseInt(x), parseInt(y)];
+};
+
+export const gameTemplate = (minefield, gameSettings) => {
+	return {
+		xDimension: gameSettings.xDimension,
+		yDimension: gameSettings.yDimension,
+		mines: gameSettings.mines,
+		minefield: minefield,
+		tilesRevealed: [],
+	};
+};

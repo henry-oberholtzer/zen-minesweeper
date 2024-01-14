@@ -1,48 +1,63 @@
 import { createNewMinefield } from './create-board.js';
-import { floodFill, getAllType } from './logic.js';
+import { floodFill, getAllType, coordsFromID, gameTemplate } from './logic.js';
+import { getLocalStorageObject, setLocalStorage } from './local-storage.js';
+
+// Global Variables
+let firstClickHandler = () => {};
+let clickHandler = () => {};
+let flagCount = 0;
+let hiddenTilesRemaining = 0;
+let numberOfMines = 0;
+
 localStorage.removeItem('currentGame');
-const setLocalStorage = (objectName) => {
-	return (object) => localStorage.setItem(objectName, JSON.stringify(object));
-};
-const getLocalStorage = (objectName) => localStorage.getItem(objectName);
-const getLocalStorageObject = (objectName) =>
-	JSON.parse(localStorage(objectName));
 
-const gameTemplate = (minefield, gameSettings) => {
-	return {
-		xDimension: gameSettings.xDimension,
-		yDimension: gameSettings.yDimension,
-		mines: gameSettings.mines,
-		minefield: minefield,
-		tilesRevealed: [],
-	};
+// timer
+let timerOn = false;
+let intervalID;
+let timeTotal = 0;
+const timer = () => {
+	if (timerOn) {
+		timeTotal++;
+		document.getElementById('timer').textContent = timeTotal;
+	} else {
+		clearInterval(intervalID);
+	}
 };
-
-const coordsFromID = (tileID) => {
-	const [x, y] = tileID.split('.');
-	return [parseInt(x), parseInt(y)];
+const startTimer = () => {
+	timerOn = true;
+	intervalID = setInterval(timer, 1000);
 };
 
 // Handle first click
 const handleFirstClick = (gameBoard) => {
-	return (defaultGameSettings) => {
+	return (gameSettings) => {
 		return (e) => {
+			const { mines, xDimension, yDimension } = gameSettings;
+			console.log(mines);
 			const [x, y] = coordsFromID(e.target.id);
-			const newGameSettings = { ...defaultGameSettings, xOpen: x, yOpen: y };
-			const newMinefield = createNewMinefield(newGameSettings); // generate minefield
-			console.log(gameTemplate(newMinefield, defaultGameSettings));
-			setLocalStorage('currentGame')(
-				gameTemplate(newMinefield, defaultGameSettings)
-			); // push to local storage
+			const newMinefield = createNewMinefield({
+				...gameSettings,
+				xOpen: x,
+				yOpen: y,
+			}); // generate minefield
+			setLocalStorage('currentGame')(gameTemplate(newMinefield, gameSettings)); // push to local storage
+			hiddenTilesRemaining = xDimension * yDimension;
+			flagCount = mines;
+			numberOfMines = mines;
 			floodFill(x, y, newMinefield).forEach((tileID) =>
 				revealTile(newMinefield)(tileID)
 			);
+			document.getElementById('mine-count').textContent = mines;
 			gameBoard.removeEventListener('click', firstClickHandler);
-			gameBoard.addEventListener('click', (e) => handleClick(newMinefield)(e)); // enable gameplay clicks
-			console.log('start timer');
+			clickHandler = handleClick(newMinefield);
+			gameBoard.addEventListener('click', clickHandler); // enable gameplay clicks
+			gameBoard.addEventListener('contextmenu', (e) => {
+				e.preventDefault();
+				handleContextMenu(e);
+			});
+			startTimer();
+			console.log(newMinefield);
 		};
-
-		// -> start timer
 	};
 };
 
@@ -50,11 +65,28 @@ const handleFirstClick = (gameBoard) => {
 const handleContextMenu = (e) => {
 	const classes = document.getElementById(e.target.id).classList;
 	if (classes.contains('hidden') && classes.contains('tile')) {
-		classes.toggle('flag');
+		if (classes.contains('flag')) {
+			classes.remove('flag');
+			flagCount++;
+		} else if (flagCount !== 0) {
+			classes.add('flag');
+			flagCount--;
+		}
+	}
+	document.getElementById('mine-count').textContent = flagCount;
+};
+
+// Check win
+const checkWin = () => {
+	if (hiddenTilesRemaining - numberOfMines === 0) {
+		console.log('you win!!!!');
+		timerOn = false;
+		document.getElementById('game').removeEventListener('click', clickHandler);
 	}
 };
 
-// Checks input and updates board;
+// Checks input and updates board
+
 const revealTile = (minefield) => {
 	return (tileID, gameOver = false) => {
 		const classes = document.getElementById(tileID).classList;
@@ -62,6 +94,9 @@ const revealTile = (minefield) => {
 			const [x, y] = coordsFromID(tileID);
 			const tileType = minefield[y][x];
 			classes.remove('hidden');
+			hiddenTilesRemaining--;
+			console.log(numberOfMines, hiddenTilesRemaining);
+			gameOver === false ? checkWin() : null;
 			switch (tileType) {
 				case 1:
 					classes.add('one');
@@ -115,7 +150,6 @@ const handleClick = (minefield) => {
 };
 
 // Generates tiles on the screen
-
 const appendTiles = (gameHTML) => {
 	return (xDimension, yDimension) => {
 		for (let x = 0; x < xDimension; x++) {
@@ -131,31 +165,27 @@ const appendTiles = (gameHTML) => {
 	};
 };
 
-// Enables user input
-
-game.addEventListener('contextmenu', (e) => {
-	e.preventDefault();
-	handleContextMenu(e);
-});
-
+// Checks for visiblity of page
 document.onvisibilitychange = () => {
 	if (document.visibilityState === 'hidden') {
+		console.log('stops the timer');
 		console.log('set local storage to the current game data');
+	} else {
+		console.log('if there is a current game, restart the timer');
 	}
 };
 
-let firstClickHandler = () => {};
-
+// Starts the game board functions
 document.addEventListener('DOMContentLoaded', () => {
 	const gameBoard = document.getElementById('game');
 	const defaultGameSettings = {
-		xDimension: 50,
-		yDimension: 20,
-		mines: 200,
+		xDimension: 8,
+		yDimension: 8,
+		mines: 4,
 	};
 	const firstClick = handleFirstClick(gameBoard)(defaultGameSettings);
 	firstClickHandler = firstClick;
-	if (getLocalStorage('currentGame')) {
+	if (getLocalStorageObject('currentGame')) {
 		console.log('true local storage');
 		// render html board per previous game ->
 		// render previous game tile settings ->
