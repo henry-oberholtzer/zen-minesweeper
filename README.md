@@ -1,6 +1,6 @@
 # Zen Minesweeper
 
-A version of minesweeper to play to relax - I had a lot of fun working out a lot of the logic functions for this application and designing all the graphic
+A version of minesweeper to play to relax - I had a lot of fun working out a lot of the logic functions for this application and designing all the graphics based on the original Windows Minesweeper!
 
 Intended to be a lightweight piece of code with no dependencies that'll run in any browser.
 
@@ -9,7 +9,7 @@ Intended to be a lightweight piece of code with no dependencies that'll run in a
 - Modal for win or lose
 - New game / Reset Button
 - Adjustable Game Board Size
-- better styling
+- Better / responsive styling
 - Instructions tab
 
 ### Bugs

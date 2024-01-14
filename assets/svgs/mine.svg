@@ -3,8 +3,8 @@
 
 <svg
    width="32"
-   height="31.999998"
-   viewBox="0 0 32 31.999999"
+   height="32"
+   viewBox="0 0 32 32"
    version="1.1"
    id="svg1"
    xml:space="preserve"
@@ -13,9 +13,9 @@
      id="defs1" /><g
      id="layer2"
      style="display:inline"><path
-       id="rect10"
+       id="mine"
        style="fill:#1a1a1a;fill-rule:evenodd;stroke-width:8;stroke-linecap:round;paint-order:stroke fill markers"
        d="M 15,3 V 7 H 13 V 8 H 11 V 9 H 10 V 8 H 9 V 7 H 7 v 2 h 1 v 1 h 1 v 1 H 8 v 2 H 7 v 2 H 3 v 2 h 4 v 2 h 1 v 2 h 1 v 1 H 8 v 1 H 7 v 2 h 2 v -1 h 1 v -1 h 1 v 1 h 2 v 1 h 2 v 4 h 2 v -4 h 2 v -1 h 2 v -1 h 1 v 1 h 1 v 1 h 2 v -2 h -1 v -1 h -1 v -1 h 1 v -2 h 1 v -2 h 4 v -2 h -4 v -2 h -1 v -2 h -1 v -1 h 1 V 9 h 1 V 7 H 23 V 8 H 22 V 9 H 21 V 8 H 19 V 7 H 17 V 3 Z" /><path
-       id="rect23"
+       id="highlight"
        style="fill:#f9f9f9;fill-rule:evenodd;stroke:none;stroke-width:8;stroke-linecap:round;paint-order:stroke fill markers"
        d="m 12,10 v 1 h -1 v 1 h -1 v 1 h 1 v 1 h 1 v 1 h 1 v -1 h 1 v -1 h 1 v -1 h -1 v -1 h -1 v -1 z" /></g></svg>

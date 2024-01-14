@@ -85,6 +85,15 @@ const checkWin = () => {
 	}
 };
 
+// handle losing the game
+const handleGameOver = (minefield) => {
+	getAllType('mine', minefield).forEach((tileID) =>
+		revealTile(minefield)(tileID, true)
+	);
+	timerOn = false;
+	document.getElementById('game').removeEventListener('click', clickHandler);
+};
+
 // Checks input and updates board
 
 const revealTile = (minefield) => {
@@ -124,9 +133,8 @@ const revealTile = (minefield) => {
 					break;
 				case 'mine':
 					gameOver ? classes.add('mine') : classes.add('mine', 'detonated');
-					getAllType('mine', minefield).forEach((tileID) =>
-						revealTile(minefield)(tileID, true)
-					);
+					handleGameOver(minefield);
+
 					break;
 				case 'blank':
 					floodFill(x, y, minefield).forEach((tileID) =>
@@ -179,9 +187,9 @@ document.onvisibilitychange = () => {
 document.addEventListener('DOMContentLoaded', () => {
 	const gameBoard = document.getElementById('game');
 	const defaultGameSettings = {
-		xDimension: 8,
-		yDimension: 8,
-		mines: 4,
+		xDimension: 50,
+		yDimension: 20,
+		mines: 200,
 	};
 	const firstClick = handleFirstClick(gameBoard)(defaultGameSettings);
 	firstClickHandler = firstClick;
@@ -191,7 +199,6 @@ document.addEventListener('DOMContentLoaded', () => {
 		// render previous game tile settings ->
 		// start game timer again
 	} else {
-		console.log('false local storage');
 		const { xDimension, yDimension } = defaultGameSettings;
 		appendTiles(gameBoard)(xDimension, yDimension); // render board per defaults
 		game.addEventListener('click', firstClickHandler); // enable first click;

@@ -20,11 +20,17 @@ body {
 	align-items: center;
 	justify-content: center;
 	background-color: var(--tile-color);
+	color: #1a1a1a;
 }
 
 #main {
 	width: fit-content;
 	height: fit-content;
+}
+
+a {
+	text-decoration: none;
+	color: #1a1a1a;
 }
 
 header {
@@ -41,7 +47,6 @@ header img {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	opacity: 0.5;
 }
 
 #game {
@@ -50,13 +55,21 @@ header img {
 	grid-auto-rows: 32px;
 }
 
-#logo {
+#mineLogo {
 	margin-left: 5px;
 	margin-right: 10px;
+	cursor: pointer;
 }
 
-#logo:hover {
-	cursor: pointer;
+path#mine {
+	fill: #1a1a1a;
+	transform-origin: center;
+	transition: transform 200ms ease-in;
+}
+
+#mineLogo:hover path#mine {
+	fill: #ff0000;
+	transform: rotate(90deg);
 }
 
 .tile {
