@@ -5,6 +5,7 @@ import { getLocalStorageObject, setLocalStorage } from './local-storage.js';
 // Global Variables
 let firstClickHandler = () => {};
 let clickHandler = () => {};
+let contextMenu = () => {};
 let flagCount = 0;
 let hiddenTilesRemaining = 0;
 let numberOfMines = 0;
@@ -50,13 +51,13 @@ const handleFirstClick = (gameBoard) => {
 			document.getElementById('mine-count').textContent = mines;
 			gameBoard.removeEventListener('click', firstClickHandler);
 			clickHandler = handleClick(newMinefield);
-			gameBoard.addEventListener('click', clickHandler); // enable gameplay clicks
-			gameBoard.addEventListener('contextmenu', (e) => {
+			contextMenu = (e) => {
 				e.preventDefault();
 				handleContextMenu(e);
-			});
+			};
+			gameBoard.addEventListener('click', clickHandler); // enable gameplay clicks
+			gameBoard.addEventListener('contextmenu', contextMenu);
 			startTimer();
-			console.log(newMinefield);
 		};
 	};
 };
@@ -69,6 +70,7 @@ const handleContextMenu = (e) => {
 			classes.remove('flag');
 			flagCount++;
 		} else if (flagCount !== 0) {
+			console.log('hello');
 			classes.add('flag');
 			flagCount--;
 		}
@@ -92,10 +94,12 @@ const handleGameOver = (minefield) => {
 	);
 	timerOn = false;
 	document.getElementById('game').removeEventListener('click', clickHandler);
+	document
+		.getElementById('game')
+		.removeEventListener('contextmenu', contextMenu);
 };
 
 // Checks input and updates board
-
 const revealTile = (minefield) => {
 	return (tileID, gameOver = false) => {
 		const classes = document.getElementById(tileID).classList;
@@ -104,7 +108,6 @@ const revealTile = (minefield) => {
 			const tileType = minefield[y][x];
 			classes.remove('hidden');
 			hiddenTilesRemaining--;
-			console.log(numberOfMines, hiddenTilesRemaining);
 			gameOver === false ? checkWin() : null;
 			switch (tileType) {
 				case 1:
@@ -152,7 +155,6 @@ const handleClick = (minefield) => {
 		const classes = document.getElementById(e.target.id).classList;
 		if (classes.contains('tile') && !classes.contains('flag')) {
 			revealTile(minefield)(e.target.id);
-			// to be dynamic with the type of tile
 		}
 	};
 };
@@ -183,9 +185,19 @@ document.onvisibilitychange = () => {
 	}
 };
 
-// Starts the game board functions
-document.addEventListener('DOMContentLoaded', () => {
+// Resets the game board
+const resetGame = () => {
+	localStorage.removeItem('currentGame');
 	const gameBoard = document.getElementById('game');
+	gameBoard.innerHTML = '';
+	gameBoard.removeEventListener('click', clickHandler);
+	gameBoard.removeEventListener('contextmenu', contextMenu);
+	clearInterval(intervalID);
+	timerOn = false;
+	timeTotal = 0;
+	document.getElementById('timer').textContent = timeTotal;
+	flagCount = 0;
+	document.getElementById('mine-count').textContent = flagCount;
 	const defaultGameSettings = {
 		xDimension: 50,
 		yDimension: 20,
@@ -193,14 +205,21 @@ document.addEventListener('DOMContentLoaded', () => {
 	};
 	const firstClick = handleFirstClick(gameBoard)(defaultGameSettings);
 	firstClickHandler = firstClick;
+	const { xDimension, yDimension } = defaultGameSettings;
+	appendTiles(gameBoard)(xDimension, yDimension);
+	gameBoard.addEventListener('click', firstClickHandler);
+};
+
+// Starts the game board functions
+document.addEventListener('DOMContentLoaded', () => {
+	const reset = document.getElementById('mineLogo');
+	reset.addEventListener('click', resetGame);
 	if (getLocalStorageObject('currentGame')) {
 		console.log('true local storage');
 		// render html board per previous game ->
 		// render previous game tile settings ->
 		// start game timer again
 	} else {
-		const { xDimension, yDimension } = defaultGameSettings;
-		appendTiles(gameBoard)(xDimension, yDimension); // render board per defaults
-		game.addEventListener('click', firstClickHandler); // enable first click;
+		resetGame();
 	}
 });
