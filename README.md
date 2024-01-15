@@ -4,6 +4,12 @@ A version of minesweeper to play to relax - I had a lot of fun working out a lot
 
 Intended to be a lightweight piece of code with no dependencies that'll run in any browser.
 
+### Technologies
+
+- JavaScript
+- HTML
+- CSS
+
 ### To-Do
 
 - Modal for win or lose
@@ -15,3 +21,8 @@ Intended to be a lightweight piece of code with no dependencies that'll run in a
 ### Bugs
 
 - On low numbers of mines in a large board (eg 10 in a 60 by 200 board) flood fill stutters a webpage
+
+### License
+
+Copyright (c) 2024 Henry Oberholtzer
+All graphics and coded licensed under a GNU GPLv3
