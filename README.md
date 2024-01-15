@@ -25,4 +25,5 @@ Intended to be a lightweight piece of code with no dependencies that'll run in a
 ### License
 
 Copyright (c) 2024 Henry Oberholtzer
+
 All graphics and coded licensed under a GNU GPLv3
