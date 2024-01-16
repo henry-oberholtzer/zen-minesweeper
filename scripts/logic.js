@@ -31,16 +31,14 @@ export const getNeighboringTilesLocations = (x, y, xLimit, yLimit) => {
 			}
 		}
 	}
+
 	return neighbors;
 };
 
 const getFill = (x, y, twoDimensionalArray, listToFill) => {
-	const neighbors = getNeighboringTilesLocations(
-		x,
-		y,
-		twoDimensionalArray[0].length - 1,
-		twoDimensionalArray.length - 1
-	);
+	const xLimit = twoDimensionalArray[0].length - 1;
+	const yLimit = twoDimensionalArray.length - 1;
+	const neighbors = getNeighboringTilesLocations(x, y, xLimit, yLimit);
 	neighbors.forEach((neighbor) => {
 		const [x, y] = neighbor;
 		const tile = twoDimensionalArray[y][x];

@@ -19,16 +19,15 @@
 import { createNewMinefield } from './create-board.js';
 import { floodFill, getAllType, coordsFromID, gameTemplate } from './logic.js';
 import { getLocalStorageObject, setLocalStorage } from './local-storage.js';
+import { enableSettings } from './settings.js';
+localStorage.removeItem('currentGame');
 
 // Global Variables
-let firstClickHandler = () => {};
 let clickHandler = () => {};
 let contextMenu = () => {};
 let flagCount = 0;
 let hiddenTilesRemaining = 0;
 let numberOfMines = 0;
-
-localStorage.removeItem('currentGame');
 
 // timer
 let timerOn = false;
@@ -48,38 +47,35 @@ const startTimer = () => {
 };
 
 // Handle first click
-const handleFirstClick = (gameBoard) => {
-	return (gameSettings) => {
-		return (e) => {
-			const { mines, xDimension, yDimension } = gameSettings;
-			console.log(mines);
-			const [x, y] = coordsFromID(e.target.id);
-			const newMinefield = createNewMinefield({
-				...gameSettings,
-				xOpen: x,
-				yOpen: y,
-			}); // generate minefield
-			setLocalStorage('currentGame')(gameTemplate(newMinefield, gameSettings)); // push to local storage
-			hiddenTilesRemaining = xDimension * yDimension;
-			flagCount = mines;
-			numberOfMines = mines;
-			floodFill(x, y, newMinefield).forEach((tileID) =>
-				revealTile(newMinefield)(tileID)
-			);
-			document.getElementById('mine-count').textContent = mines;
-			gameBoard.removeEventListener('click', firstClickHandler);
-			clickHandler = handleClick(newMinefield);
-			contextMenu = (e) => {
-				e.preventDefault();
-				handleContextMenu(e);
-			};
-			gameBoard.addEventListener('click', clickHandler); // enable gameplay clicks
-			gameBoard.addEventListener('contextmenu', contextMenu);
-			startTimer();
-		};
+const handleFirstClick = (e) => {
+	const settings = getLocalStorageObject('settings');
+	const { mines, xDimension, yDimension } = settings;
+	console.log(mines);
+	const [x, y] = coordsFromID(e.target.id);
+	const newMinefield = createNewMinefield({
+		...settings,
+		xOpen: x,
+		yOpen: y,
+	}); // generate minefield
+	setLocalStorage('currentGame')(gameTemplate(newMinefield, settings)); // push to local storage
+	hiddenTilesRemaining = xDimension * yDimension;
+	flagCount = mines;
+	numberOfMines = mines;
+	floodFill(x, y, newMinefield).forEach((tileID) => {
+		revealTile(newMinefield)(tileID);
+	});
+	document.getElementById('mine-count').textContent = mines;
+	const game = document.getElementById('game');
+	game.removeEventListener('click', handleFirstClick);
+	clickHandler = handleClick(newMinefield);
+	contextMenu = (e) => {
+		e.preventDefault();
+		handleContextMenu(e);
 	};
+	game.addEventListener('click', clickHandler); // enable gameplay clicks
+	game.addEventListener('contextmenu', contextMenu);
+	startTimer();
 };
-
 // Handles clicks to set flags
 const handleContextMenu = (e) => {
 	const classes = document.getElementById(e.target.id).classList;
@@ -88,7 +84,6 @@ const handleContextMenu = (e) => {
 			classes.remove('flag');
 			flagCount++;
 		} else if (flagCount !== 0) {
-			console.log('hello');
 			classes.add('flag');
 			flagCount--;
 		}
@@ -216,22 +211,16 @@ const resetGame = () => {
 	document.getElementById('timer').textContent = timeTotal;
 	flagCount = 0;
 	document.getElementById('mine-count').textContent = flagCount;
-	const defaultGameSettings = {
-		xDimension: 50,
-		yDimension: 20,
-		mines: 200,
-	};
-	const firstClick = handleFirstClick(gameBoard)(defaultGameSettings);
-	firstClickHandler = firstClick;
-	const { xDimension, yDimension } = defaultGameSettings;
+	const settings = getLocalStorageObject('settings');
+	const { xDimension, yDimension } = settings;
 	appendTiles(gameBoard)(xDimension, yDimension);
-	gameBoard.addEventListener('click', firstClickHandler);
+	gameBoard.addEventListener('click', handleFirstClick);
 };
 
 // Starts the game board functions
 document.addEventListener('DOMContentLoaded', () => {
-	const reset = document.getElementById('mineLogo');
-	reset.addEventListener('click', resetGame);
+	enableSettings(resetGame);
+	document.getElementById('mineLogo').addEventListener('click', resetGame);
 	if (getLocalStorageObject('currentGame')) {
 		console.log('true local storage');
 		// render html board per previous game ->

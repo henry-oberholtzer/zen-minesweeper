@@ -12,6 +12,11 @@ Intended to be a lightweight piece of code with no dependencies that'll run in a
 
 ### To-Do
 
+- Mobile Adjustments
+
+  - Loads Screen based on display dimension,
+  - Adapts to long press for placing flags as well
+
 - Modal for win or lose
 - New game / Reset Button
 - Adjustable Game Board Size

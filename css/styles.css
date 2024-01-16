@@ -36,6 +36,14 @@ a {
 header {
 	display: flex;
 	align-items: center;
+	height: 50px;
+}
+
+footer {
+	height: 50px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
 }
 
 header img {
