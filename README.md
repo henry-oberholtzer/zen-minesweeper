@@ -4,6 +4,8 @@ A version of minesweeper to play to relax - I had a lot of fun working out a lot
 
 Intended to be a lightweight piece of code with no dependencies that'll run in any browser.
 
+![Zen Minesweeper](https://raw.githubusercontent.com/henry-oberholtzer/zen-minesweeper/main/game_screenshot.jpg)
+
 ### Technologies
 
 - JavaScript
@@ -30,4 +32,5 @@ Intended to be a lightweight piece of code with no dependencies that'll run in a
 ### License
 
 Copyright (c) 2024 Henry Oberholtzer
+
 All graphics and coded licensed under a GNU GPLv3
