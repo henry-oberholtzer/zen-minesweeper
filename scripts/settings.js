@@ -8,11 +8,32 @@ const scrubInput = (e) => {
 };
 
 const createDefaultSettings = () => {
-	const uiMargin = 100;
 	const innerHeight = window.innerHeight;
+	const widthMargin = (innerWidth) => {
+		if (innerWidth <= 480) {
+			return 0;
+		} else if (innerWidth <= 640) {
+			return 32 * 2;
+		} else if (innerWidth <= 768) {
+			return 32 * 3;
+		} else if (innerWidth <= 1269) {
+			return 32 * 4;
+		} else {
+			return 32 * 20;
+		}
+	};
+	const heightMargin = (innerHeight) => {
+		const margin = 128;
+		if (innerHeight > 900) {
+			return margin + 32 * 1;
+		}
+		return margin;
+	};
 	const innerWidth = window.innerWidth;
-	const xDimension = 2 * Math.floor((innerWidth - 50) / 32 / 2);
-	const yDimension = 2 * Math.floor((innerHeight - uiMargin) / 32 / 2);
+	const xDimension =
+		2 * Math.floor((innerWidth - widthMargin(innerWidth)) / 32 / 2);
+	const yDimension =
+		2 * Math.floor((innerHeight - heightMargin(innerHeight)) / 32 / 2);
 	return {
 		xDimension: xDimension,
 		yDimension: yDimension,

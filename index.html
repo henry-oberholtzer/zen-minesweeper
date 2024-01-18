@@ -33,7 +33,7 @@
 	</head>
 	<body>
 		<div id="main">
-			<header>
+			<header id="header">
 				<svg
 				width="32"
 				height="32"
@@ -69,41 +69,36 @@
 						"
 						d="m 12,10 v 1 h -1 v 1 h -1 v 1 h 1 v 1 h 1 v 1 h 1 v -1 h 1 v -1 h 1 v -1 h -1 v -1 h -1 v -1 z" />
 				</g>
-			</svg><p>zen minesweeper<span
+			</svg><p id="title">zen minesweeper | <span
 				class="dynamic"
 				id="mine-count"
 				>0</span
-			>
-			flags remaining
-			<span
+			> | <span
 				class="dynamic"
 				id="timer"
 				>0</span
-			>
-			seconds spent on this field
-		</p></header>
+			></p>
+			</header>
 			<div id="game"></div>
-			<div >
-				<footer>
-					<div id="settings">
-						<label for="width-input">width:</label>
+			<footer id="footer">
+					<form id="settings">
+						<label class="hiddenElement" for="width-input">width:</label>
 						<input type="text" id="width-input"></input>
-						<label for="height-input">height:</label>
+						<p id="by">by</p>
+						<label class="hiddenElement" for="height-input">height:</label>
 						<input type="text" id="height-input"></input>
 						<select id="difficulty">
-							<option value="1">beginner</option>
-							<option value="2">intermediate</option>
-							<option value="3">advanced</option>
+							<option value="1">less mines</option>
+							<option value="2">more mines</option>
+							<option value="3">tooo many</option>
 						</select>
-						<button id="generate">generate</button>
-						<button id="defaults">restore defaults</button>
-					</div>
+						<button id="generate">new</button>
+						<button id="defaults">defaults</button>
+					</form>
 						<div id="about">
 							2024 <a href="https://www.henryoberholtzer.com">Henry Oberholtzer</a>
 						</div>
-				</footer>
-
-			</div>
+			</footer>
 		</div>
 	</body>
 	<script

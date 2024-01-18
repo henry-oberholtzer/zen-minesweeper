@@ -214,6 +214,8 @@ const resetGame = () => {
 	const settings = getLocalStorageObject('settings');
 	const { xDimension, yDimension } = settings;
 	appendTiles(gameBoard)(xDimension, yDimension);
+	document.getElementById('header').style.width = `${xDimension * 32}px`;
+	document.getElementById('footer').style.width = `${xDimension * 32}px`;
 	gameBoard.addEventListener('click', handleFirstClick);
 };
 
