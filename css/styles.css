@@ -121,6 +121,22 @@ button {
 	cursor: pointer;
 }
 
+#about {
+	text-align: center;
+}
+
+#modal {
+	position: fixed;
+	display: flex;
+	align-self: center;
+	justify-self: center;
+	z-index: 1;
+	font-weight: bold;
+	text-align: center;
+	font-size: 64px;
+	text-shadow: #ffffff 1px 0 10px;
+}
+
 #game {
 	display: grid;
 	grid-auto-columns: 32px;

@@ -92,11 +92,13 @@ export const enableSettings = (resetFunction) => {
 		updateYDimension(scrubInput(e))
 	);
 
-	document.getElementById('generate').addEventListener('click', () => {
+	document.getElementById('generate').addEventListener('click', (e) => {
+		e.preventDefault();
 		updateMines(parseInt(document.getElementById('difficulty').value));
 		resetFunction();
 	});
-	document.getElementById('defaults').addEventListener('click', () => {
+	document.getElementById('defaults').addEventListener('click', (e) => {
+		e.preventDefault();
 		setLocalStorage('settings')(createDefaultSettings());
 		updateMines(parseInt(document.getElementById('difficulty').value));
 		resetFunction();

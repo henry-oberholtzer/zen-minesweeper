@@ -23,7 +23,7 @@ import { enableSettings } from './settings.js';
 localStorage.removeItem('currentGame');
 
 // Global Variables
-let clickHandler = () => {};
+let mouseHandler = () => {};
 let contextMenu = () => {};
 let flagCount = 0;
 let hiddenTilesRemaining = 0;
@@ -41,16 +41,25 @@ const timer = () => {
 		clearInterval(intervalID);
 	}
 };
+const resetTimer = () => {
+	clearInterval(intervalID);
+	timerOn = false;
+	timeTotal = 0;
+};
+
 const startTimer = () => {
 	timerOn = true;
 	intervalID = setInterval(timer, 1000);
+};
+const pauseTimer = () => {
+	timerOn = false;
+	clearInterval(intervalID);
 };
 
 // Handle first click
 const handleFirstClick = (e) => {
 	const settings = getLocalStorageObject('settings');
 	const { mines, xDimension, yDimension } = settings;
-	console.log(mines);
 	const [x, y] = coordsFromID(e.target.id);
 	const newMinefield = createNewMinefield({
 		...settings,
@@ -67,17 +76,17 @@ const handleFirstClick = (e) => {
 	document.getElementById('mine-count').textContent = mines;
 	const game = document.getElementById('game');
 	game.removeEventListener('click', handleFirstClick);
-	clickHandler = handleClick(newMinefield);
+	mouseHandler = handleMouseDown(newMinefield);
 	contextMenu = (e) => {
 		e.preventDefault();
-		handleContextMenu(e);
 	};
-	game.addEventListener('click', clickHandler); // enable gameplay clicks
+	game.addEventListener('mousedown', mouseHandler);
 	game.addEventListener('contextmenu', contextMenu);
 	startTimer();
 };
+
 // Handles clicks to set flags
-const handleContextMenu = (e) => {
+const setFlag = (e) => {
 	const classes = document.getElementById(e.target.id).classList;
 	if (classes.contains('hidden') && classes.contains('tile')) {
 		if (classes.contains('flag')) {
@@ -91,12 +100,29 @@ const handleContextMenu = (e) => {
 	document.getElementById('mine-count').textContent = flagCount;
 };
 
+// Manages touch screen input
+const handleMouseDown = (minefield) => {
+	return (e) => {
+		if (e.button === 0) {
+			revealTile(minefield)(e.target.id);
+		} else {
+			setFlag(e);
+		}
+	};
+};
+
+const removeAllListeners = () => {
+	const game = document.getElementById('game');
+	game.removeEventListener('mousedown', mouseHandler);
+	game.removeEventListener('contextmenu', contextMenu);
+};
+
 // Check win
 const checkWin = () => {
 	if (hiddenTilesRemaining - numberOfMines === 0) {
-		console.log('you win!!!!');
-		timerOn = false;
-		document.getElementById('game').removeEventListener('click', clickHandler);
+		pauseTimer();
+		removeAllListeners();
+		createModal(true);
 	}
 };
 
@@ -105,18 +131,35 @@ const handleGameOver = (minefield) => {
 	getAllType('mine', minefield).forEach((tileID) =>
 		revealTile(minefield)(tileID, true)
 	);
-	timerOn = false;
-	document.getElementById('game').removeEventListener('click', clickHandler);
-	document
-		.getElementById('game')
-		.removeEventListener('contextmenu', contextMenu);
+	pauseTimer();
+	removeAllListeners();
+	createModal(false);
+};
+
+const createModal = (WinBoolean) => {
+	const h2 = document.createElement('h2');
+	h2.id = 'modal';
+	h2.textContent = WinBoolean ? 'you win!' : 'game over';
+	h2.style.color = WinBoolean ? '#008000' : 'rgb(255, 0, 0)';
+	document.getElementById('game').style.opacity = '0.3';
+	document.getElementById('main').append(h2);
+};
+
+const clearModal = () => {
+	const modal = document.getElementById('modal');
+	modal ? modal.remove() : '';
+	document.getElementById('game').style.opacity = '1.0';
 };
 
 // Checks input and updates board
 const revealTile = (minefield) => {
 	return (tileID, gameOver = false) => {
 		const classes = document.getElementById(tileID).classList;
-		if (classes.contains('hidden')) {
+		if (
+			classes.contains('hidden') &&
+			classes.contains('tile') &&
+			!classes.contains('flag')
+		) {
 			const [x, y] = coordsFromID(tileID);
 			const tileType = minefield[y][x];
 			classes.remove('hidden');
@@ -148,9 +191,12 @@ const revealTile = (minefield) => {
 					classes.add('eight');
 					break;
 				case 'mine':
-					gameOver ? classes.add('mine') : classes.add('mine', 'detonated');
-					handleGameOver(minefield);
-
+					if (gameOver) {
+						classes.add('mine');
+					} else {
+						classes.add('mine', 'detonated');
+						handleGameOver(minefield);
+					}
 					break;
 				case 'blank':
 					floodFill(x, y, minefield).forEach((tileID) =>
@@ -162,14 +208,17 @@ const revealTile = (minefield) => {
 	};
 };
 
-// Handles clicks to set flags and reveal squares
-const handleClick = (minefield) => {
-	return (e) => {
-		const classes = document.getElementById(e.target.id).classList;
-		if (classes.contains('tile') && !classes.contains('flag')) {
-			revealTile(minefield)(e.target.id);
+// Checks for visiblity of page
+document.onvisibilitychange = () => {
+	const currentGame = getLocalStorageObject('currentGame');
+	if (document.visibilityState === 'hidden') {
+		pauseTimer();
+		console.log('set local storage to the current game data');
+	} else {
+		if (currentGame) {
+			startTimer();
 		}
-	};
+	}
 };
 
 // Generates tiles on the screen
@@ -188,35 +237,23 @@ const appendTiles = (gameHTML) => {
 	};
 };
 
-// Checks for visiblity of page
-document.onvisibilitychange = () => {
-	if (document.visibilityState === 'hidden') {
-		console.log('stops the timer');
-		console.log('set local storage to the current game data');
-	} else {
-		console.log('if there is a current game, restart the timer');
-	}
-};
-
 // Resets the game board
 const resetGame = () => {
 	localStorage.removeItem('currentGame');
-	const gameBoard = document.getElementById('game');
-	gameBoard.innerHTML = '';
-	gameBoard.removeEventListener('click', clickHandler);
-	gameBoard.removeEventListener('contextmenu', contextMenu);
-	clearInterval(intervalID);
-	timerOn = false;
-	timeTotal = 0;
-	document.getElementById('timer').textContent = timeTotal;
+	const game = document.getElementById('game');
+	game.innerHTML = '';
+	removeAllListeners();
+	resetTimer();
+	clearModal();
 	flagCount = 0;
+	document.getElementById('timer').textContent = timeTotal;
 	document.getElementById('mine-count').textContent = flagCount;
 	const settings = getLocalStorageObject('settings');
 	const { xDimension, yDimension } = settings;
-	appendTiles(gameBoard)(xDimension, yDimension);
+	appendTiles(game)(xDimension, yDimension);
 	document.getElementById('header').style.width = `${xDimension * 32}px`;
 	document.getElementById('footer').style.width = `${xDimension * 32}px`;
-	gameBoard.addEventListener('click', handleFirstClick);
+	game.addEventListener('click', handleFirstClick);
 };
 
 // Starts the game board functions
@@ -224,7 +261,6 @@ document.addEventListener('DOMContentLoaded', () => {
 	enableSettings(resetGame);
 	document.getElementById('mineLogo').addEventListener('click', resetGame);
 	if (getLocalStorageObject('currentGame')) {
-		console.log('true local storage');
 		// render html board per previous game ->
 		// render previous game tile settings ->
 		// start game timer again
