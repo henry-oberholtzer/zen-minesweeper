@@ -1,5 +1,7 @@
 # Zen Minesweeper
 
+**In Progress** V2.0 - With full test coverage!
+
 A version of minesweeper to play to relax - I had a lot of fun working out a lot of the logic functions for this application and designing all the graphics based on the original Windows Minesweeper!
 
 Intended to be a lightweight piece of code with no dependencies that'll run in any browser.

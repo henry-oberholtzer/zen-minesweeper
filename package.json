@@ -4,7 +4,8 @@
   "description": "A web implementation of the classic Minesweeper game",
   "main": "zen-minesweeper.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "build": "rollup --config"
   },
   "repository": {
     "type": "git",
@@ -23,6 +24,11 @@
   },
   "homepage": "https://github.com/henry-oberholtzer/zen-minesweeper#readme",
   "devDependencies": {
-    "jest": "^29.7.0"
+    "@babel/core": "^7.24.3",
+    "@babel/preset-env": "^7.24.3",
+    "@rollup/plugin-terser": "^0.4.4",
+    "babel-jest": "^29.7.0",
+    "jest": "^29.7.0",
+    "rollup": "^4.13.0"
   }
 }

@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { createNewMinefield } from './create-board.js';
+import { createNewMinefield } from './board.js';
 import { floodFill, getAllType, coordsFromID, gameTemplate } from './logic.js';
 import { getLocalStorageObject, setLocalStorage } from './local-storage.js';
 import { enableSettings } from './settings.js';
