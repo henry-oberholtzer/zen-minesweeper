@@ -16,8 +16,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { getNeighboringTilesLocations } from './logic.js';
-
 // Creates empty array
 const empty2D = (x, y) => {
 	return new Array(y).fill().map(() => {
@@ -33,39 +31,58 @@ const placeMines = (array2D, mines) => {
 	if (mines > array2D.flat().filter((num) => num === 0).length) {
 		throw new RangeError("The number of mines must be less than or equal to the size of the array minus preset blank tiles.")
 	}
-	const arrayWithMines = [...array2D];
-	const yMax = arrayWithMines.length;
-	const xMax = arrayWithMines[0].length;
+	const mineArray = [...array2D];
+	const yMax = mineArray.length;
+	const xMax = mineArray[0].length;
 
 	let m = 0;
 	do {
 		const x = randomInt(xMax);
 		const y = randomInt(yMax);
-		if (arrayWithMines[y][x] != 0) {
+		if (mineArray[y][x] != 0) {
 			continue;
 		}
 		else
 		{
-			arrayWithMines[y][x] = 'mine';
+			mineArray[y][x] = 'mine';
 			m++;
 		}
 	} while (m < mines) 
-	return arrayWithMines;
+	return mineArray;
+};
+
+const getNeighborTiles = (x, y, xLimit, yLimit) => {
+	const neighbors = [];
+	for (let i = -1; i < 2; i++) {
+		const newY = y + i;
+		if (newY < 0 || yLimit <= newY) {
+		} else {
+			for (let j = -1; j < 2; j++) {
+				const newX = x + j;
+				if (newX < 0 || xLimit <= newX) {
+				} else {
+					neighbors.push([newX, newY]);
+				}
+			}
+		}
+	}
+
+	return neighbors;
 };
 
 // Maps proximity to the array
-const generateProximity = (twoDimensionArray) => {
+const getProximity = (twoDimensionArray) => {
 	const proximityArray = twoDimensionArray.map((xArray, y) => {
 		return xArray.map((tile, x) => {
 			if (tile === 'mine') {
 				return tile;
 			} else {
 				let mineCount = 0;
-				getNeighboringTilesLocations(
+				getNeighborTiles(
 					x,
 					y,
-					twoDimensionArray[0].length - 1,
-					twoDimensionArray.length - 1
+					twoDimensionArray[0].length,
+					twoDimensionArray.length
 				).forEach((location) => {
 					const [x, y] = location;
 					if (twoDimensionArray[y][x] === 'mine') {
@@ -84,16 +101,16 @@ const generateProximity = (twoDimensionArray) => {
 };
 
 // Handles the new minefield
-export const createNewMinefield = (newGame) => {
+const newMinefield = (newGame) => {
 	const { xDimension, yDimension, xOpen, yOpen, mines } = newGame;
 	let emptyBoard = empty2D(xDimension, yDimension);
-	getNeighboringTilesLocations(xOpen, yOpen, xDimension, yDimension).forEach(
+	getNeighborTiles(xOpen, yOpen, xDimension, yDimension).forEach(
 		(location) => {
 			const [x, y] = location;
 			emptyBoard[y][x] = 'blank';
 		}
 	);
-	return generateProximity(placeMines(emptyBoard, mines));
+	return getProximity(placeMines(emptyBoard, mines));
 };
 
-export { empty2D, randomInt, placeMines }
+export { empty2D, randomInt, placeMines, getProximity, getNeighborTiles, newMinefield }

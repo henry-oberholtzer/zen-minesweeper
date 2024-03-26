@@ -15,30 +15,12 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-
-export const getNeighboringTilesLocations = (x, y, xLimit, yLimit) => {
-	const neighbors = [];
-	for (let i = -1; i < 2; i++) {
-		const newX = x + i;
-		if (newX < 0 || newX > xLimit) {
-		} else {
-			for (let j = -1; j < 2; j++) {
-				const newY = y + j;
-				if (newY < 0 || newY > yLimit) {
-				} else {
-					neighbors.push([newX, newY]);
-				}
-			}
-		}
-	}
-
-	return neighbors;
-};
+import { getNeighborTiles } from "./board";
 
 const getFill = (x, y, twoDimensionalArray, listToFill) => {
-	const xLimit = twoDimensionalArray[0].length - 1;
-	const yLimit = twoDimensionalArray.length - 1;
-	const neighbors = getNeighboringTilesLocations(x, y, xLimit, yLimit);
+	const xLimit = twoDimensionalArray[0].length;
+	const yLimit = twoDimensionalArray.length;
+	const neighbors = getNeighborTiles(x, y, xLimit, yLimit);
 	neighbors.forEach((neighbor) => {
 		const [x, y] = neighbor;
 		const tile = twoDimensionalArray[y][x];
