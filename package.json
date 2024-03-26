@@ -1,0 +1,28 @@
+{
+  "name": "zen-minesweeper",
+  "version": "1.0.0",
+  "description": "A web implementation of the classic Minesweeper game",
+  "main": "zen-minesweeper.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/henry-oberholtzer/zen-minesweeper.git"
+  },
+  "keywords": [
+    "Minesweeper",
+    "Game",
+    "Web",
+    "Puzzle"
+  ],
+  "author": "Henry Oberholtzer",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/henry-oberholtzer/zen-minesweeper/issues"
+  },
+  "homepage": "https://github.com/henry-oberholtzer/zen-minesweeper#readme",
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
+}
