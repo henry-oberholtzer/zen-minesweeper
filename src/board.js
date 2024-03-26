@@ -29,18 +29,27 @@ const empty2D = (x, y) => {
 const randomInt = (max) => Math.floor(Math.random() * max);
 
 
-const placeMines = (twoDimensionArray, mines) => {
-	const arrayWithMines = [...twoDimensionArray];
-	const yMax = arrayWithMines.length - 1;
-	const xMax = arrayWithMines[0].length - 1;
-	for (let m = 0; m <= mines; ) {
+const placeMines = (array2D, mines) => {
+	if (mines > array2D.flat().filter((num) => num === 0).length) {
+		throw new RangeError("The number of mines must be less than or equal to the size of the array minus preset blank tiles.")
+	}
+	const arrayWithMines = [...array2D];
+	const yMax = arrayWithMines.length;
+	const xMax = arrayWithMines[0].length;
+
+	let m = 0;
+	do {
 		const x = randomInt(xMax);
 		const y = randomInt(yMax);
-		if (arrayWithMines[y][x] !== 'blank') {
+		if (arrayWithMines[y][x] != 0) {
+			continue;
+		}
+		else
+		{
 			arrayWithMines[y][x] = 'mine';
 			m++;
 		}
-	}
+	} while (m < mines) 
 	return arrayWithMines;
 };
 
