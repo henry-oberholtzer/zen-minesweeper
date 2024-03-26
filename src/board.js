@@ -33,7 +33,7 @@ const placeMines = (twoDimensionArray, mines) => {
 	const arrayWithMines = [...twoDimensionArray];
 	const yMax = arrayWithMines.length - 1;
 	const xMax = arrayWithMines[0].length - 1;
-	for (let m = 0; m < mines; ) {
+	for (let m = 0; m <= mines; ) {
 		const x = randomInt(xMax);
 		const y = randomInt(yMax);
 		if (arrayWithMines[y][x] !== 'blank') {
