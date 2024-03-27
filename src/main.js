@@ -17,7 +17,7 @@
 */
 
 import { createNewMinefield } from './board.js';
-import { floodFill, getAllType, coordsFromID, gameTemplate } from './logic.js';
+import { floodFill, getTypeCoordinates, coordsFromID, gameTemplate } from './logic.js';
 import { getLocalStorageObject, setLocalStorage } from './local-storage.js';
 import { enableSettings } from './settings.js';
 localStorage.removeItem('currentGame');
@@ -60,7 +60,8 @@ const pauseTimer = () => {
 const handleFirstClick = (e) => {
 	const settings = getLocalStorageObject('settings');
 	const { mines, xDimension, yDimension } = settings;
-	const [x, y] = coordsFromID(e.target.id);
+	const coords = coordsFromID(e.target.id)
+	const [x, y] = coords;
 	const newMinefield = createNewMinefield({
 		...settings,
 		xOpen: x,
@@ -70,7 +71,7 @@ const handleFirstClick = (e) => {
 	hiddenTilesRemaining = xDimension * yDimension;
 	flagCount = mines;
 	numberOfMines = mines;
-	floodFill(x, y, newMinefield).forEach((tileID) => {
+	floodFill(coords, newMinefield).forEach((tileID) => {
 		revealTile(newMinefield)(tileID);
 	});
 	document.getElementById('mine-count').textContent = mines;
@@ -128,7 +129,7 @@ const checkWin = () => {
 
 // handle losing the game
 const handleGameOver = (minefield) => {
-	getAllType('mine', minefield).forEach((tileID) =>
+	getTypeCoordinates('mine', minefield).forEach((tileID) =>
 		revealTile(minefield)(tileID, true)
 	);
 	pauseTimer();
@@ -160,7 +161,8 @@ const revealTile = (minefield) => {
 			classes.contains('tile') &&
 			!classes.contains('flag')
 		) {
-			const [x, y] = coordsFromID(tileID);
+			const coords = coordsFromID(tileID)
+			const [x, y] = coords;
 			const tileType = minefield[y][x];
 			classes.remove('hidden');
 			hiddenTilesRemaining--;
@@ -199,7 +201,7 @@ const revealTile = (minefield) => {
 					}
 					break;
 				case 'blank':
-					floodFill(x, y, minefield).forEach((tileID) =>
+					floodFill(coords, minefield).forEach((tileID) =>
 						revealTile(minefield)(tileID)
 					);
 					break;

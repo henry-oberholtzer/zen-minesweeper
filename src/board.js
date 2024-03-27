@@ -16,16 +16,13 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-// Creates empty array
 const empty2D = (x, y) => {
 	return new Array(y).fill().map(() => {
 		return new Array(x).fill(0);
 	})
 };
 
-// Generates random integers
 const randomInt = (max) => Math.floor(Math.random() * max);
-
 
 const placeMines = (array2D, mines) => {
 	if (mines > array2D.flat().filter((num) => num === 0).length) {
@@ -54,41 +51,40 @@ const placeMines = (array2D, mines) => {
 const getNeighborTiles = (x, y, xLimit, yLimit) => {
 	const neighbors = [];
 	for (let i = -1; i < 2; i++) {
-		const newY = y + i;
-		if (newY < 0 || yLimit <= newY) {
-		} else {
-			for (let j = -1; j < 2; j++) {
-				const newX = x + j;
-				if (newX < 0 || xLimit <= newX) {
-				} else {
-					neighbors.push([newX, newY]);
-				}
+		for (let j = -1; j < 2; j++) {
+			const newX = x+i;
+			const newY = y+j;
+			if (newX < 0 || newY < 0) {
+				continue;
+			}
+			if (xLimit <= newX || yLimit <= newY) {
+				continue;
+			}
+			if (newX != y ||  newY != x) {
+				neighbors.push([newX, newY]);
 			}
 		}
 	}
-
 	return neighbors;
 };
 
-// Maps proximity to the array
-const getProximity = (twoDimensionArray) => {
-	const proximityArray = twoDimensionArray.map((xArray, y) => {
+const getProximity = (array2D) => {
+	return array2D.map((xArray, y) => {
 		return xArray.map((tile, x) => {
 			if (tile === 'mine') {
 				return tile;
 			} else {
 				let mineCount = 0;
-				getNeighborTiles(
-					x,
-					y,
-					twoDimensionArray[0].length,
-					twoDimensionArray.length
-				).forEach((location) => {
+				const neighbors = getNeighborTiles(x, y, array2D[0].length, array2D.length)
+				console.log(`Neighbors of ${x}.${y}:`, neighbors)
+				neighbors.forEach((location) => {
 					const [x, y] = location;
-					if (twoDimensionArray[y][x] === 'mine') {
+					console.log(`Type ${x}.${y}:`, array2D[y][x])
+					if (array2D[y][x] === 'mine') {
 						mineCount++;
 					}
 				});
+				console.log("Minecount:", mineCount)
 				if (mineCount > 0) {
 					return mineCount;
 				} else {
@@ -97,10 +93,8 @@ const getProximity = (twoDimensionArray) => {
 			}
 		});
 	});
-	return proximityArray;
 };
 
-// Handles the new minefield
 const newMinefield = (newGame) => {
 	const { xDimension, yDimension, xOpen, yOpen, mines } = newGame;
 	let emptyBoard = empty2D(xDimension, yDimension);
@@ -113,4 +107,54 @@ const newMinefield = (newGame) => {
 	return getProximity(placeMines(emptyBoard, mines));
 };
 
-export { empty2D, randomInt, placeMines, getProximity, getNeighborTiles, newMinefield }
+const getFill = (coords, array2D, xLimit, yLimit, toFill) => {
+	const neighbors = getNeighborTiles(coords[0], coords[1], xLimit, yLimit);
+	neighbors.forEach((tile) => {
+		const [x, y] = tile;
+		const tileType = array2D[y][x];
+		if (!toFill.has(tile)) {
+			if (tileType !== 'mine' && tileType !== 'blank') {
+				toFill.add(tile);
+			} else if (tileType === 'blank') {
+				toFill.add(coords);
+				getFill(tile, array2D, xLimit, yLimit, toFill);
+			}
+		}
+	});
+};
+
+const floodFill = (coords, array2D) => {
+	const toFill = new Set([coords])
+	const xLimit = array2D[0].length;
+	const yLimit = array2D.length;
+	getFill(coords, array2D, xLimit, yLimit, toFill);
+	return Array.from(toFill);
+};
+
+const getTypeCoordinates = (type, twoDimensionalArray) => {
+	const typeIDs = [];
+	twoDimensionalArray.forEach((row, y) => {
+		row.forEach((tile, x) => {
+			if (tile === type) {
+				typeIDs.push(`${x}.${y}`);
+			}
+		});
+	});
+	return typeIDs;
+};
+
+const idFromCoords = (coords) => `${coords[0]}.${coords[1]}`
+
+const coordsFromID = (tileID) => tileID.split('.').map((i) => parseInt(i));
+
+export const gameTemplate = (minefield, gameSettings) => {
+	return {
+		xDimension: gameSettings.xDimension,
+		yDimension: gameSettings.yDimension,
+		mines: gameSettings.mines,
+		minefield: minefield,
+		tilesRevealed: [],
+	};
+};
+
+export { idFromCoords, coordsFromID, getTypeCoordinates, empty2D, randomInt, placeMines, getProximity, getNeighborTiles, newMinefield, floodFill }

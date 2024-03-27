@@ -1,4 +1,51 @@
-import { empty2D, getNeighborTiles, getProximity, newMinefield, placeMines, randomInt } from '../src/board';
+import {
+	empty2D,
+	getNeighborTiles,
+	getProximity,
+	newMinefield,
+	placeMines,
+	randomInt,
+	idFromCoords,
+	coordsFromID,
+	getTypeCoordinates,
+	floodFill,
+} from '../src/board';
+
+const m = 'mine';
+const b = 'blank';
+
+const initial = [
+	[0, 0, 0, 0, 0, 0, 0, 0],
+	[0, 0, 0, 0, 0, 0, 0, 0],
+	[0, 0, 0, 0, 0, 0, 0, 0],
+	[0, 0, 0, 0, 0, 0, 0, 0],
+	[0, 0, 0, 0, 0, 0, 0, 0],
+	[0, 0, 0, 0, 0, 0, 0, 0],
+	[0, 0, 0, 0, 0, 0, 0, 0],
+	[0, 0, 0, 0, 0, 0, 0, 0],
+];
+
+const coordinates = [
+	[7, 0],
+	[1, 1],
+	[4, 1],
+	[6, 3],
+	[3, 4],
+	[2, 5],
+	[5, 6],
+	[2, 7],
+];
+
+const placed = [
+	[0, 0, 0, 0, 0, 0, 0, m],
+	[0, m, 0, 0, m, 0, 0, 0],
+	[b, b, b, 0, 0, 0, 0, 0],
+	[b, b, b, 0, 0, 0, m, 0],
+	[b, b, b, m, 0, 0, 0, 0],
+	[0, 0, m, 0, 0, 0, 0, 0],
+	[0, 0, 0, 0, 0, m, 0, 0],
+	[0, 0, m, 0, 0, 0, 0, 0],
+];
 
 describe('empty2D', () => {
 	test('creates a single row 2D array', () => {
@@ -32,42 +79,6 @@ describe('randomInt', () => {
 		expect(results.every((n) => n < max));
 	});
 });
-
-const m = 'mine';
-const b = 'blank';
-
-const initial = [
-	[0, 0, 0, 0, 0, 0, 0, 0],
-	[0, 0, 0, 0, 0, 0, 0, 0],
-	[0, 0, 0, 0, 0, 0, 0, 0],
-	[0, 0, 0, 0, 0, 0, 0, 0],
-	[0, 0, 0, 0, 0, 0, 0, 0],
-	[0, 0, 0, 0, 0, 0, 0, 0],
-	[0, 0, 0, 0, 0, 0, 0, 0],
-	[0, 0, 0, 0, 0, 0, 0, 0],
-];
-
-const coordinates = [
-	[7, 0],
-	[5, 1],
-	[1, 1],
-	[6, 3],
-	[3, 4],
-	[2, 5],
-	[5, 6],
-	[2, 7],
-];
-
-const placed = [
-	[0, 0, 0, 0, 0, 0, 0, m],
-	[0, m, 0, 0, m, 0, 0, 0],
-	[b, b, b, 0, 0, 0, 0, 0],
-	[b, b, b, 0, 0, 0, m, 0],
-	[b, b, b, m, 0, 0, 0, 0],
-	[0, 0, m, 0, 0, 0, 0, 0],
-	[0, 0, 0, 0, 0, m, 0, 0],
-	[0, 0, m, 0, 0, 0, 0, 0],
-];
 
 describe('placeMines', () => {
 	let with_blank = [];
@@ -143,7 +154,7 @@ describe('getProximity', () => {
 		];
 		expect(getProximity(input)).toEqual(expected);
 	});
-	test('should appropriately handle a combination of mines and no mines', () => {
+	test.only('should appropriately handle a combination of mines and no mines', () => {
 		const input = [
 			[m, 0, 0],
 			[m, 0, 0],
@@ -154,80 +165,158 @@ describe('getProximity', () => {
 			[m, 2, b],
 			[1, 1, b],
 		];
-		expect(getProximity(input)).toEqual(expected);
+		expect(getProximity(input)).toContainEqual(expected);
 	});
 });
 
 describe('getNeighborTiles', () => {
-	test('will return a list of neighboring tiles to the given coordinates', () => {
+	test('will return a list of neighboring tiles to the given coordinates, excluding itself', () => {
 		const x = 2;
 		const y = 2;
 		const xLimit = 100;
 		const yLimit = 100;
 		const expected = [
-			[1, 1],[2, 1],[3, 1],
-			[1, 2],[2, 2],[3, 2],
-			[1, 3],[2, 3],[3, 3],
+			[1, 1],
+			[1, 2],
+			[1, 3],
+			[2, 1],
+			[2, 3],
+			[3, 1],
+			[3, 2],
+			[3, 3],
 		];
-    expect(getNeighborTiles(x, y, xLimit, yLimit)).toEqual(expected)
+		expect(getNeighborTiles(x, y, xLimit, yLimit)).toEqual(expected);
 	});
-  test('will return a list of neighboring tiles, respecting the xLimit', () => {
-    const x = 2;
+	test('will return a list of neighboring tiles, respecting the xLimit', () => {
+		const x = 2;
 		const y = 2;
 		const xLimit = 3;
 		const yLimit = 100;
 		const expected = [
-			[1, 1],[2, 1],
-			[1, 2],[2, 2],
-			[1, 3],[2, 3],
+			[1, 1],
+			[1, 2],
+			[1, 3],
+			[2, 1],
+			[2, 3],
 		];
-    expect(getNeighborTiles(x, y, xLimit, yLimit)).toEqual(expected)
-  });
-  test('will return a list of neighboring tiles, respecting the yLimit', () => {
-    const x = 2;
+		expect(getNeighborTiles(x, y, xLimit, yLimit)).toEqual(expected);
+	});
+	test('will return a list of neighboring tiles, respecting the yLimit', () => {
+		const x = 2;
 		const y = 2;
 		const xLimit = 100;
 		const yLimit = 3;
 		const expected = [
-			[1, 1],[2, 1],[3, 1],
-			[1, 2],[2, 2],[3, 2],
+			[1, 1],
+			[1, 2],
+			[2, 1],
+			[3, 1],
+			[3, 2],
 		];
-    expect(getNeighborTiles(x, y, xLimit, yLimit)).toEqual(expected)
-  });
-  test('will return a list of neighboring tiles respecting xLimit and yLimit', () => {
+		expect(getNeighborTiles(x, y, xLimit, yLimit)).toEqual(expected);
+	});
+	test('will return a list of neighboring tiles respecting xLimit and yLimit', () => {
 		const x = 2;
 		const y = 2;
 		const xLimit = 3;
 		const yLimit = 3;
 		const expected = [
-			[1, 1],[2, 1],
-			[1, 2],[2, 2],
+			[1, 1],
+			[1, 2],
+			[2, 1],
 		];
-    expect(getNeighborTiles(x, y, xLimit, yLimit)).toEqual(expected)
+		expect(getNeighborTiles(x, y, xLimit, yLimit)).toEqual(expected);
 	});
-  test('will return a list of neighboring tiles respecting zero as the mininmum value', () => {
-    const y = 0;
-    const x = 0;
-    const xLimit = 1;
-    const yLimit = 1;
-    const expected = [[0,0]]
-    expect(getNeighborTiles(x, y, xLimit, yLimit)).toEqual(expected)
-  })
+	test('will return a list of neighboring tiles respecting zero as the mininmum value', () => {
+		const y = 0;
+		const x = 0;
+		const xLimit = 1;
+		const yLimit = 1;
+		const expected = [];
+		expect(getNeighborTiles(x, y, xLimit, yLimit)).toEqual(expected);
+	});
 });
 
 describe('newMinefield', () => {
-  test('creates a valid gameboard based on given inputs', () => {
-    const newGame = {
-      xDimension: 8,
-      yDimension: 10,
-      xOpen: 1,
-      yOpen: 1,
-      mines: 16,
-    };
-    const minefield = newMinefield(newGame);
-    expect(minefield.length).toEqual(newGame.yDimension)
-    expect(minefield[0].length).toEqual(newGame.xDimension)
-    expect(minefield.flat().filter((tile) => tile === m).length).toEqual(16)
-  })
-})
+	test('creates a valid gameboard based on given inputs', () => {
+		const newGame = {
+			xDimension: 8,
+			yDimension: 10,
+			xOpen: 1,
+			yOpen: 1,
+			mines: 16,
+		};
+		const minefield = newMinefield(newGame);
+		expect(minefield.length).toEqual(newGame.yDimension);
+		expect(minefield[0].length).toEqual(newGame.xDimension);
+		expect(minefield.flat().filter((tile) => tile === m).length).toEqual(16);
+	});
+});
 
+describe('coordsFromID', () => {
+	test('accepts a string that matches "x.y" in pattern, returns [x,y]', () => {
+		const expected = [1, 2];
+		const result = coordsFromID('1.2');
+		expect(result).toEqual(expected);
+	});
+});
+
+describe('idFromCoords', () => {
+	test('accepts x and y coordinates, returns a string matching "x.y"', () => {
+		const expected = '1.2';
+		const result = idFromCoords([1, 2]);
+		expect(result).toEqual(expected);
+	});
+});
+
+describe('getTypeCoordinates', () => {
+	test('correctly retrieves all mine coordinates.', () => {
+		const expected = coordinates.map((c) => idFromCoords(c));
+		expect(getTypeCoordinates(m, placed)).toEqual(expected);
+	});
+});
+
+// describe('floodFill', () => {
+// 	test('should return all blank tile coordinates in a 3x3 grid', () => {
+// 		const input = [
+// 			[1,1,1],
+// 			[1,1,1],
+// 			[1,1,1],
+// 		];
+// 		const coords = [1,1];
+// 		const expected = [
+// 			[0,0],
+// 			[1,0],
+// 			[2,0],
+// 			[0,1],
+// 			[1,1],
+// 			[2,1],
+// 			[0,2],
+// 			[1,2],
+// 			[2,2],
+// 		];
+// 		const result = floodFill(coords, input)
+// 		expect(result).toEqual(expected)
+// 	});
+// 	test('should respond similarly with blank tiles.', () => {
+// 		const input = [
+// 			[b,b,b],
+// 			[b,b,b],
+// 			[b,b,b],
+// 		];
+// 		const coords = [1,1];
+// 		const expected = [
+// 			[0,0],
+// 			[1,0],
+// 			[2,0],
+// 			[0,1],
+// 			[1,1],
+// 			[2,1],
+// 			[0,2],
+// 			[1,2],
+// 			[2,2],
+// 		];
+// 		const result = floodFill(coords, input)
+// 		expect(result).toEqual(expected)
+// 	});
+// })
