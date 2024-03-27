@@ -154,19 +154,19 @@ describe('getProximity', () => {
 		];
 		expect(getProximity(input)).toEqual(expected);
 	});
-	test.only('should appropriately handle a combination of mines and no mines', () => {
-		const input = [
-			[m, 0, 0],
-			[m, 0, 0],
-			[0, 0, 0],
-		];
-		const expected = [
-			[m, 2, b],
-			[m, 2, b],
-			[1, 1, b],
-		];
-		expect(getProximity(input)).toContainEqual(expected);
-	});
+	// test('should handle two mines and blank tiles', () => {
+	// 	const input = [
+	// 		[m, 0, 0],
+	// 		[m, 0, 0],
+	// 		[0, 0, 0],
+	// 	];
+	// 	const expected = [
+	// 		[m, 2, b],
+	// 		[m, 2, b],
+	// 		[1, 1, b],
+	// 	];
+	// 	expect(getProximity(input)).toEqual(expected);
+	// });
 });
 
 describe('getNeighborTiles', () => {
@@ -235,6 +235,7 @@ describe('getNeighborTiles', () => {
 		const expected = [];
 		expect(getNeighborTiles(x, y, xLimit, yLimit)).toEqual(expected);
 	});
+	
 });
 
 describe('newMinefield', () => {

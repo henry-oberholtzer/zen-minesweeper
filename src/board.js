@@ -60,9 +60,10 @@ const getNeighborTiles = (x, y, xLimit, yLimit) => {
 			if (xLimit <= newX || yLimit <= newY) {
 				continue;
 			}
-			if (newX != y ||  newY != x) {
-				neighbors.push([newX, newY]);
+			if (newX == y && newY == x) {
+				continue;
 			}
+			neighbors.push([newX, newY]);
 		}
 	}
 	return neighbors;
@@ -76,15 +77,12 @@ const getProximity = (array2D) => {
 			} else {
 				let mineCount = 0;
 				const neighbors = getNeighborTiles(x, y, array2D[0].length, array2D.length)
-				console.log(`Neighbors of ${x}.${y}:`, neighbors)
 				neighbors.forEach((location) => {
 					const [x, y] = location;
-					console.log(`Type ${x}.${y}:`, array2D[y][x])
 					if (array2D[y][x] === 'mine') {
 						mineCount++;
 					}
 				});
-				console.log("Minecount:", mineCount)
 				if (mineCount > 0) {
 					return mineCount;
 				} else {
