@@ -19,9 +19,31 @@ class Minesweeper {
     this.openingIndex = openingIndex;
     this.gameOver = false
     this.#mineIndices = new Set([])
-    this.revealedIndices = this.#openingMove(openingIndex)
+    this.revealedIndices = new Set([])
     this.flaggedIndices = new Set([])
-    this.board = this.#createBoard()
+    this.board = []
+    this.#openingMove(openingIndex)
+    this.#createBoard()
+  }
+
+  input(index: number, type: number = 0) {
+    if (!this.gameOver) {
+      if (index < 0 || this.board.length <= index) {
+        throw new RangeError("Range must be within the size of the board.")
+      }
+      switch (type) {
+        case 1:
+          this.flag(index)
+          break;
+          case 2:
+            this.revealGrid(index)
+            break;
+            default:
+              this.reveal(index)
+              break;
+            }
+    }
+    return this.view
   }
 
   get view() {
@@ -84,13 +106,13 @@ class Minesweeper {
 
   #openingMove(openingIndex: number | null) {
     if (openingIndex === null) {
-      return new Set([])
+      this.revealedIndices = new Set([])
     }
     else
     {
       const adjacent = this.getAdjacent(openingIndex)
       adjacent.push(openingIndex)
-      return new Set(adjacent)
+      this.revealedIndices = new Set(adjacent)
     }
   }
 
@@ -109,7 +131,8 @@ class Minesweeper {
         array[index] = 9
         this.#mineIndices.add(index)
       }
-    } 
+    }
+
     return array
   }
 
@@ -173,7 +196,10 @@ class Minesweeper {
       });
       return mineCount;
     })
-    return withProximity
+    this.board = withProximity
+    if (this.openingIndex) {
+      this.getAdjacent(this.openingIndex).forEach((i) => this.reveal(i))
+    } 
   }
 
 }
